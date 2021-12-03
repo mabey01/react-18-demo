@@ -1,3 +1,11 @@
+function sleep(milliseconds: number) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
 interface SearchResultItemProps {
   artist: React.ReactNode;
   followers: number;
@@ -11,14 +19,14 @@ export function SearchResultItem({
   followers,
   imageSrc,
 }: SearchResultItemProps) {
-  let i = 0;
-  while (i < 1000000) {
-    i++;
-  }
+  sleep(3);
 
   return (
     <div>
-      <img src={imageSrc} className="w-full h-48 object-cover rounded-lg" />
+      <img
+        src={imageSrc}
+        className="w-full h-48 object-cover rounded-lg bg-gray-500 border-none"
+      />
       <div className="pt-2 pb-4">
         <div className="flex justify-between">
           <h3 className="text-md font-semibold">{artist}</h3>
