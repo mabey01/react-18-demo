@@ -1,14 +1,11 @@
 import { ArtistResults } from "../data";
-import { AsyncResource } from "../utils/data-fetching-library";
 import { SearchResultItem } from "./search-result-item";
 
 interface SearchResultsProps {
-  resource: AsyncResource<ArtistResults>;
+  results: ArtistResults;
 }
 
-export default function SearchResults({ resource }: SearchResultsProps) {
-  const results = resource.read();
-
+export default function SearchResults({ results }: SearchResultsProps) {
   return (
     <>
       {results.map((result) => (
