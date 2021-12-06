@@ -16,6 +16,9 @@ const SearchGrid = styled.div`
   }
 `;
 
+// rendering visualisation -> https://miro.com/app/board/uXjVOdwBbM8=/
+// fetch-on-render vs render-as-you-fetch -> https://remix.run/
+
 export function Search() {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<ArtistResults>([]);

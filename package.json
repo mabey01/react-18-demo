@@ -1,6 +1,7 @@
 {
-  "name": "vite-project",
-  "version": "0.0.0",
+  "name": "MaxFM",
+  "description": "A react 18 demo project",
+  "version": "0.1.0",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
