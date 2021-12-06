@@ -1,9 +1,17 @@
-import { ChangeEvent, Suspense, useState } from "react";
+import {
+  ChangeEvent,
+  lazy,
+  memo,
+  Suspense,
+  useState,
+  useTransition,
+} from "react";
 import styled from "styled-components";
 import { ArtistResults } from "../data";
-import SearchResults from "../search-results/search-results";
+import { RenderingIndicator } from "../rendering-indicator/rendering-indicator";
+import { AsyncResource } from "../utils/data-fetching-library";
 
-import { fetchSearchResult } from "../utils/search-results-resource";
+import { createSearchResultsResource } from "../utils/search-results-resource";
 
 const SearchGrid = styled.div`
   display: grid;
@@ -16,19 +24,30 @@ const SearchGrid = styled.div`
   }
 `;
 
+const LazySearchResults = lazy(
+  () => import("../search-results/search-results")
+);
+const MemoSearchResults = memo(LazySearchResults);
+const initialResultResource = createSearchResultsResource("");
+
 // rendering visualisation -> https://miro.com/app/board/uXjVOdwBbM8=/
 // fetch-on-render vs render-as-you-fetch -> https://remix.run/
 
 export function Search() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [results, setResults] = useState<ArtistResults>([]);
+  const [resource, setResource] = useState<AsyncResource<ArtistResults>>(
+    initialResultResource
+  );
+
+  const [isPending, startTransition] = useTransition();
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const newSearchTerm = e.target.value;
     setSearchTerm(newSearchTerm);
 
-    const results = await fetchSearchResult(searchTerm);
-    setResults(results);
+    startTransition(() => {
+      setResource(createSearchResultsResource(searchTerm));
+    });
   };
 
   return (
@@ -45,10 +64,11 @@ export function Search() {
       <div className="mt-8">
         <header className="flex items-center space-x-2 h-6">
           <h2 className="font-semibold text-base text-gray-500">Results</h2>
+          {isPending && <RenderingIndicator />}
         </header>
         <SearchGrid className="mt-4">
           <Suspense fallback={<div>Searching</div>}>
-            <SearchResults results={results} />
+            <MemoSearchResults resource={resource} />
           </Suspense>
         </SearchGrid>
       </div>
